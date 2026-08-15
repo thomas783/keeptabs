@@ -1,35 +1,43 @@
 # KeepTabs 🔒
 
-**탭을 절대 잃지 않는 크롬 탭/세션 매니저.**
-OneTab·Session Buddy처럼 열린 탭을 한 번에 저장하되, **저장·삭제 시점마다 자동으로 버전 스냅샷을 남겨** 업데이트·크래시·실수에도 되돌릴 수 있다. 구독·계정 없음, 로컬 우선.
+**A Chrome tab/session manager that never loses your tabs.**
+Save all your open tabs at once like OneTab or Session Buddy — but KeepTabs **auto-snapshots a version on every save and delete**, so an update, crash, or accidental deletion can always be rolled back. No subscription, no account, local-first.
 
-## 왜 만들었나 (포지셔닝)
-OneTab(~200만)·Session Buddy(~100만)는 로컬 저장이라 **업데이트/크래시/삭제 시 저장한 탭이 통째로 증발**한다 — 몇 년째 안 고쳐진 대표 불만. 클라우드형(Toby·Workona)은 durability는 풀었지만 **월 구독·계정 종속·데이터 불신**으로 미움받는다.
-빈 자리 = **로컬 우선 + 자동 버전 백업 + 구독 없음 + 감사 가능(무텔레메트리)**.
+## Why it exists (positioning)
+OneTab (~2M users) and Session Buddy (~1M) store everything locally, so **an update / crash / uninstall can wipe your saved tabs entirely** — a top complaint left unfixed for years. Cloud alternatives (Toby, Workona) solve durability but are disliked for **monthly subscriptions, account lock-in, and data-trust concerns**.
+The gap = **local-first + automatic version backups + no subscription + auditable (no telemetry)**.
 
-> "탭을 절대 잃지 않는 탭 매니저 — 로컬 우선, 자동 버전 백업, 원클릭 복구, 구독 없음, 계정 없음."
+> "A tab manager that never loses your tabs — local-first, automatic version backups, one-click restore, no subscription, no account."
 
-## MVP 기능 (현재)
-- 툴바 아이콘 클릭 → **현재 창의 모든 탭 저장 + 원본 닫기** (OneTab 방식)
-- 저장 세션 목록 · 개별/전체 다시 열기 · 세션/탭 삭제
-- **자동 버전 백업**: 모든 변경 시점의 스냅샷을 최근 50개 보관 → "🕓 백업 기록"에서 이전 시점으로 복원
-- **내보내기/가져오기** (JSON) — 언제든 자기 손으로 백업
+## Features
+- Click the toolbar icon → **save every tab in the current window and close the originals** (OneTab-style)
+- Saved-session list · open individually or all at once · delete sessions/tabs · remove single tabs
+- **Rename sessions** inline
+- **Automatic version backups**: a snapshot of every change is kept (last 50) → restore an earlier point from "🕓 Backups"
+- **Export / Import** (JSON) — back up by hand anytime
+- **Sync-folder backup**: point KeepTabs at a Google Drive / OneDrive / Dropbox desktop-sync folder and it writes `keeptabs-backup.json` there automatically — no login, no server, cross-platform. Optional auto-backup on every change.
+- **Bilingual UI** (English / Korean), switchable at runtime
 
-## 무결성(never-lose) 설계
-- `storage.js`의 `setState()`가 **모든 mutation마다 세션 전체 스냅샷을 history에 append**(ring buffer). 파괴적 덮어쓰기·마이그레이션이 데이터를 날릴 수 없음.
-- 저장은 `chrome.storage.local` (로컬 우선). **서버로 아무것도 안 보냄** → 프라이버시 불신 원천 차단, 서버비 0.
+## Never-lose design
+- `setState()` in `storage.js` **appends a full snapshot of all sessions to history on every mutation** (ring buffer). No destructive overwrite or migration can silently lose data.
+- Data lives in `chrome.storage.local` (local-first). **Nothing is sent to any server** → removes the privacy-trust problem at the source, and server cost is zero. The optional sync-folder backup uses the browser's File System Access API and writes only to a folder you pick.
 
-## 설치 (개발자 모드 로드)
-1. `chrome://extensions` → 우측 상단 **개발자 모드** ON
-2. **압축해제된 확장 프로그램 로드** → 이 폴더 선택
-3. 툴바의 KeepTabs 아이콘 클릭 → 현재 탭 저장됨
+## Install (load unpacked)
+1. Open `chrome://extensions` → turn on **Developer mode** (top right)
+2. **Load unpacked** → select this folder
+3. Click the KeepTabs icon in the toolbar → the current window's tabs are saved
 
-## 로드맵
-- [ ] (유료) **유저 자기 저장소로 백업/기기간 동기화** — 구글드라이브/Dropbox. 서버 없이, 데이터는 유저 것.
-- [ ] 세션 이름 편집, 검색, 태그
-- [ ] 자동 주기 백업 파일(다운로드) 옵션
-- [ ] 아이콘/스토어 리스팅 (before/after 없이, "OneTab이 탭 날려서 왔어요" SEO)
-- [ ] freemium: 무료 + 일회성/라이프타임 $15~25 (동기화·고급 복구 잠금해제)
+## Development
+- No build step — plain ES modules loaded by the extension.
+- Unit tests (Node's built-in test runner): `node --test tests/*.mjs` — covers storage, backup settings, and i18n.
+- `harness.html` is a git-ignored local page that runs the UI (`list.js`/`list.css`) against a mocked `chrome` API for quick visual testing.
 
-## 상태
-MVP 스캐폴딩. 로컬 로드해서 동작 확인 단계.
+## Roadmap
+- [ ] Cross-device sync polish and paid tier (still user-owned storage, no server)
+- [ ] Search and tags for sessions
+- [ ] Scheduled/periodic backup-file downloads
+- [ ] Icon + store listing (SEO around "OneTab lost my tabs")
+- [ ] Freemium: free core + one-time / lifetime $15–25 (unlock sync & advanced recovery)
+
+## Status
+Working MVP. Load it locally to try it out.
