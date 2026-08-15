@@ -1,17 +1,10 @@
-import { addSession, ensureInit } from "./storage.js";
+import { addSession, ensureInit, isSavable } from "./storage.js";
 
 chrome.runtime.onInstalled.addListener(ensureInit);
 chrome.runtime.onStartup.addListener(ensureInit);
 
 const newId = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-
-const isSavable = (url) =>
-  url &&
-  !url.startsWith("chrome") &&
-  !url.startsWith("edge") &&
-  !url.startsWith("about:") &&
-  !url.startsWith("brave://");
 
 // Click the toolbar icon → save all tabs in the current window, then open the vault.
 chrome.action.onClicked.addListener(async () => {

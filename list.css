@@ -114,9 +114,11 @@ input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 .empty p{max-width:360px;margin:0 auto;font-size:14px}
 
 /* ---------- modals ---------- */
+/* top-anchored so the box grows downward — expanding/collapsing the folder panel
+   no longer re-centers the modal and shifts the controls above it */
 .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(3px);
-  display:flex;align-items:center;justify-content:center;z-index:20;padding:20px;
-  animation:fade .16s ease}
+  display:flex;align-items:flex-start;justify-content:center;z-index:20;
+  padding:min(11vh,80px) 20px 20px;animation:fade .16s ease}
 .modal[hidden]{display:none}
 .modal-box{background:var(--surface);border-radius:16px;width:min(560px,100%);max-height:82vh;overflow:auto;
   padding:24px;box-shadow:var(--shadow-lg);animation:pop .18s cubic-bezier(.2,.7,.3,1)}

@@ -7,6 +7,15 @@ const HISTORY_CAP = 50; // keep last N snapshots
 
 const emptyState = () => ({ version: 1, seq: 0, snapSeq: 0, sessions: [], history: [] });
 
+// Single source of truth for which tab URLs can be saved (shared by the toolbar
+// action and the in-page "Save this window" button). Excludes browser-internal pages.
+export const isSavable = (url) =>
+  !!url &&
+  !url.startsWith("chrome") &&
+  !url.startsWith("edge") &&
+  !url.startsWith("about:") &&
+  !url.startsWith("brave://");
+
 export async function getState() {
   const obj = await chrome.storage.local.get(KEY);
   return obj[KEY] || emptyState();

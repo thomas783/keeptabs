@@ -7,6 +7,7 @@ import {
   restoreVersion,
   exportJSON,
   importJSON,
+  isSavable,
 } from "./storage.js";
 import { initLang, setLang, getLang, t, LANGS } from "./i18n.js";
 import {
@@ -171,9 +172,7 @@ $("lang").addEventListener("change", async (e) => {
 
 $("save-now").addEventListener("click", async () => {
   const tabs = await chrome.tabs.query({ currentWindow: true });
-  const savable = tabs.filter(
-    (tb) => tb.url && !tb.url.startsWith("chrome") && !tb.url.startsWith("edge") && !tb.url.startsWith("about:")
-  );
+  const savable = tabs.filter((tb) => isSavable(tb.url));
   if (!savable.length) return toast(t("nothing_to_save"));
   await addSession({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
@@ -219,7 +218,7 @@ $("history").addEventListener("click", async () => {
   const rows = (state.history || [])
     .map(
       (h) => `<div class="hrow">
-        <div><div class="when">${when(h.ts)}</div><div class="what">${esc(REASON(h.reason))} · ${t("tabs_count", { n: h.sessions.length }).replace(/\d+/, h.sessions.length)}</div></div>
+        <div><div class="when">${when(h.ts)}</div><div class="what">${esc(REASON(h.reason))} · ${esc(t("sessions_count", { n: h.sessions.length }))}</div></div>
         <button class="mini" data-restore="${h.id}">${esc(t("restore_this"))}</button>
       </div>`
     )
@@ -242,14 +241,18 @@ $("history-modal").addEventListener("click", (e) => {
 });
 
 /* ---------------- backup settings modal ---------------- */
+let refreshGen = 0; // guards against overlapping refreshes clobbering each other
 async function refreshBackupUI() {
+  const gen = ++refreshGen;
   const s = await getSettings();
+  if (gen !== refreshGen) return; // a newer refresh started — let it win
   document.querySelectorAll('input[name="bmode"]').forEach((r) => (r.checked = r.value === s.mode));
   $("folder-panel").hidden = s.mode !== "folder";
   $("auto-backup").checked = s.autoOn;
   if (s.mode !== "folder") return; // panel hidden — nothing else to sync
 
   const st = await backupStatus();
+  if (gen !== refreshGen) return; // superseded while awaiting status
   const connected = !!st.ok;
 
   // status badge (dot + label)
