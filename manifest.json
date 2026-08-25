@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "KeepTabs — never lose a tab",
   "version": "1.0.0",
-  "description": "Save all your tabs in one click, with automatic versioned backups. Never lose them to an update, crash, or uninstall. Back up to a synced folder. No subscription, no account, local-first.",
+  "description": "Save all your tabs in one click with automatic version backups. Never lose them. Local-first, no account, no subscription.",
   "permissions": ["tabs", "storage"],
   "background": { "service_worker": "background.js", "type": "module" },
   "action": {
