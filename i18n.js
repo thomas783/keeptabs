@@ -144,12 +144,22 @@ export function getLang() {
   return lang;
 }
 
+// Default to the browser UI language when the user hasn't picked one yet.
+function detectDefaultLang() {
+  try {
+    const ui = chrome.i18n?.getUILanguage?.() || "en";
+    return ui.toLowerCase().startsWith("ko") ? "ko" : "en";
+  } catch {
+    return "en";
+  }
+}
+
 export async function initLang() {
   try {
     const obj = await chrome.storage.local.get("keeptabs_lang");
-    lang = obj.keeptabs_lang || "en"; // default English
+    lang = obj.keeptabs_lang || detectDefaultLang(); // stored choice, else browser locale
   } catch {
-    lang = "en";
+    lang = detectDefaultLang();
   }
   return lang;
 }

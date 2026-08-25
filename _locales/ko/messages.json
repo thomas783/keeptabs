@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "KeepTabs — 탭을 절대 잃지 않는",
+    "description": "Extension name shown in the toolbar and Web Store."
+  },
+  "appDesc": {
+    "message": "클릭 한 번에 모든 탭을 저장하고 자동으로 버전 백업합니다. 절대 잃지 않아요. 로컬 우선, 계정·구독 없음.",
+    "description": "Short store/manifest description (max 132 chars)."
+  },
+  "actionTitle": {
+    "message": "현재 창 저장 (KeepTabs)",
+    "description": "Toolbar button tooltip."
+  }
+}

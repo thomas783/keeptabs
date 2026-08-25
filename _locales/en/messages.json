@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "KeepTabs — never lose a tab",
+    "description": "Extension name shown in the toolbar and Web Store."
+  },
+  "appDesc": {
+    "message": "Save all your tabs in one click with automatic version backups. Never lose them. Local-first, no account, no subscription.",
+    "description": "Short store/manifest description (max 132 chars)."
+  },
+  "actionTitle": {
+    "message": "Save this window (KeepTabs)",
+    "description": "Toolbar button tooltip."
+  }
+}
