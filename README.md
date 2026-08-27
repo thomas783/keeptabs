@@ -28,9 +28,18 @@ The gap = **local-first + automatic version backups + no subscription + auditabl
 - **Bilingual UI** (English / Korean), auto-detected from your browser and switchable at runtime
 
 ## Screenshots
-| Saved sessions | Version history (one-click restore) | Sync-folder backup |
-|:---:|:---:|:---:|
-| ![Saved sessions](store/keeptabs-store-ui-1280x800.png) | ![Version history](store/keeptabs-store-backups-1280x800.png) | ![Sync-folder backup](store/keeptabs-store-backup-1280x800.png) |
+
+**Saved sessions — your tabs, tidied into named sessions**
+
+![Saved sessions](store/keeptabs-store-ui-1280x800.png)
+
+**Version history — roll back any change with one-click restore**
+
+![Version history](store/keeptabs-store-backups-1280x800.png)
+
+**Sync-folder backup — Google Drive / OneDrive / Dropbox, no account, no server**
+
+![Sync-folder backup](store/keeptabs-store-backup-1280x800.png)
 
 ## Never-lose design
 - `setState()` in `storage.js` **appends a full snapshot of all sessions to history on every mutation** (ring buffer). No destructive overwrite or migration can silently lose data.
