@@ -1,7 +1,7 @@
 # KeepTabs 🔒
 
 **A Chrome tab/session manager that never loses your tabs.**
-Save all your open tabs at once like OneTab or Session Buddy — but KeepTabs **auto-snapshots a version on every save and delete**, so an update, crash, or accidental deletion can always be rolled back. No subscription, no account, local-first.
+Save your whole window of tabs at once, and KeepTabs **auto-snapshots a version on every save and delete**, so an update, crash, or accidental deletion can always be rolled back. No subscription, no account, local-first.
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/obggnihijfooppjkddcpgpkmpcnamoap?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=0d9488)](https://chromewebstore.google.com/detail/obggnihijfooppjkddcpgpkmpcnamoap)
 [![Users](https://img.shields.io/chrome-web-store/users/obggnihijfooppjkddcpgpkmpcnamoap?label=users&color=0d9488)](https://chromewebstore.google.com/detail/obggnihijfooppjkddcpgpkmpcnamoap)
@@ -13,13 +13,13 @@ Save all your open tabs at once like OneTab or Session Buddy — but KeepTabs **
 ![KeepTabs — drowning in tabs? Save them all in one click.](store/keeptabs-store-1280x800.png)
 
 ## Why it exists (positioning)
-OneTab (~2M users) and Session Buddy (~1M) store everything locally, so **an update / crash / uninstall can wipe your saved tabs entirely** — a top complaint left unfixed for years. Cloud alternatives (Toby, Workona) solve durability but are disliked for **monthly subscriptions, account lock-in, and data-trust concerns**.
-The gap = **local-first + automatic version backups + no subscription + auditable (no telemetry)**.
+Most tab savers keep everything in local storage, so **an update / crash / uninstall can wipe your saved tabs entirely** — a long-standing pain point. Cloud-based options solve durability but bring **monthly subscriptions, account lock-in, and data-trust concerns**.
+The gap KeepTabs fills = **local-first + automatic version backups + no subscription + auditable (no telemetry)**.
 
 > "A tab manager that never loses your tabs — local-first, automatic version backups, one-click restore, no subscription, no account."
 
 ## Features
-- Click the toolbar icon → **save every tab in the current window and close the originals** (OneTab-style)
+- Click the toolbar icon → **save every tab in the current window and close the originals** (one click to clear the clutter)
 - Saved-session list · open individually or all at once · delete sessions/tabs · remove single tabs
 - **Rename sessions** inline
 - **Automatic version backups**: a snapshot of every change is kept (last 50) → restore an earlier point from "🕓 Backups"

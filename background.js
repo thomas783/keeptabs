@@ -31,7 +31,7 @@ chrome.action.onClicked.addListener(async () => {
     tabs: saved,
   });
 
-  // Open the vault, then close the tabs we just saved (OneTab-style).
+  // Open the vault, then close the tabs we just saved (one-click save-and-close).
   const listTab = await chrome.tabs.create({ url: listUrl });
   const toClose = tabs
     .filter((t) => t.id !== listTab.id && isSavable(t.url))

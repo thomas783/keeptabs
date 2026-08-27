@@ -22,7 +22,7 @@ English (add Korean as an additional locale if desired — the extension UI ship
 
 **KeepTabs saves your open tabs in one click — and never loses them.**
 
-Like OneTab or Session Buddy, KeepTabs collapses a window full of tabs into a tidy list you can reopen later. The difference: **every save and delete is automatically version-snapshotted**, so an extension update, a browser crash, or an accidental delete can always be rolled back.
+KeepTabs is a lightweight tab manager and session saver: it collapses a window full of tabs into a tidy, named list you can reopen anytime. The difference is durability — **every save and delete is automatically version-snapshotted**, so an extension update, a browser crash, or an accidental delete can always be rolled back.
 
 **Why KeepTabs**
 - One click saves the whole window and clears the clutter
@@ -35,7 +35,7 @@ Like OneTab or Session Buddy, KeepTabs collapses a window full of tabs into a ti
 **Never-lose by design**
 Every change appends a full snapshot to a local history buffer, so destructive edits can't silently wipe your saved tabs. The optional folder backup uses the browser's File System Access API and writes only to the folder you pick.
 
-Made for people who lost their tabs to a tool that was supposed to keep them.
+Built for anyone who has ever lost a window full of tabs.
 
 ---
 
@@ -68,6 +68,7 @@ A privacy policy URL is required if any data is handled. Suggested one-liner to 
 
 ## Assets checklist for the dashboard
 - [x] Store icon 128×128 — `icons/icon-128.png`
-- [ ] Screenshots: at least 1, 1280×800 or 640×400 (capture the session list + Backups modal)
-- [ ] Small promo tile 440×280 (optional; only needed for featuring)
-- [ ] Privacy policy URL (host the paragraph above)
+- [x] Screenshots 1280×800 — `store/keeptabs-store-*.png` (EN + KO sets)
+- [x] Small promo tile 440×280 — `store/promo-small-440x280.jpeg`
+- [x] Marquee promo tile 1400×560 — `store/promo-marquee-1400x560.jpeg`
+- [x] Privacy policy URL — https://github.com/thomas783/keeptabs/blob/main/PRIVACY.md
