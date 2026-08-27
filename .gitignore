@@ -4,3 +4,4 @@ node_modules/
 .colorvenv/
 harness.html
 claudedocs/
+LAUNCH.md
