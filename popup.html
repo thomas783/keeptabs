@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KeepTabs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="pop">
+    <header class="pop-head">
+      <div class="brand">
+        <svg class="brand-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="m8.5 14.5 2.5 2.5 4.5-4.5"/></svg>
+        <span class="brand-name">KeepTabs</span>
+      </div>
+      <div class="head-right">
+        <span id="count" class="count"></span>
+        <select id="lang" class="lang" title="Language"></select>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <label class="selall"><input type="checkbox" id="select-all" checked /> <span id="selall-label">Select all</span></label>
+      <a id="open-vault" href="#">Saved list &rarr;</a>
+    </div>
+
+    <div class="searchbox">
+      <svg class="search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="tab-search" class="tab-search" type="search" autocomplete="off" />
+    </div>
+
+    <ul id="tabs" class="tabs"></ul>
+    <div id="empty" class="empty" hidden>No savable tabs in this window.</div>
+
+    <footer class="pop-foot">
+      <input id="name" class="name" type="text" autocomplete="off" />
+      <button id="save-close" class="btn primary">Save &amp; close</button>
+      <div class="foot-row">
+        <button id="save-only" class="btn">Save only</button>
+        <button id="close-only" class="btn danger">Close only</button>
+      </div>
+    </footer>
+  </div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
