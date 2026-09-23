@@ -3,6 +3,7 @@ node_modules/
 *.zip
 .colorvenv/
 .playwright-mcp/
+.secrets/
 harness.html
 claudedocs/
 LAUNCH.md
