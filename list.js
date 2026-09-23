@@ -10,6 +10,7 @@ import {
   isSavable,
 } from "./storage.js";
 import { initLang, setLang, getLang, t, LANGS } from "./i18n.js";
+import { filterSessions } from "./search.js";
 import {
   getSettings,
   setSettings,
@@ -59,6 +60,9 @@ function applyI18n() {
     el.setAttribute("data-tip", label); // fast CSS tooltip (see [data-tip] in list.css)
     el.setAttribute("aria-label", label); // keep accessible name for screen readers
   });
+  document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+    el.setAttribute("placeholder", t(el.dataset.i18nPh));
+  });
   const sel = $("lang");
   sel.innerHTML = LANGS.map(
     (l) => `<option value="${l.code}"${l.code === getLang() ? " selected" : ""}>${l.label}</option>`
@@ -67,6 +71,8 @@ function applyI18n() {
 }
 
 /* ---------------- render sessions ---------------- */
+let query = ""; // live search filter (session name + tab title/url)
+
 async function render() {
   const state = await getState();
   const sessions = state.sessions || [];
@@ -76,7 +82,14 @@ async function render() {
   $("stats").innerHTML = sessions.length
     ? t("stats", { sessions: `<b>${sessions.length}</b>`, tabs: `<b>${totalTabs}</b>`, history: `<b>${(state.history || []).length}</b>` })
     : "";
-  $("sessions").innerHTML = sessions.map(renderSession).join("");
+
+  // Live search (session name, or per-tab title/url) — logic in search.js.
+  const results = filterSessions(sessions, query);
+  const noMatch = query.trim() !== "" && results.length === 0;
+
+  $("sessions").innerHTML = noMatch
+    ? `<p class="no-results">${esc(t("no_search_results"))}</p>`
+    : results.map(({ session, tabs }) => renderSession(session, tabs)).join("");
 
   document.querySelectorAll("[data-open]").forEach((b) =>
     b.addEventListener("click", () => openSession(b.dataset.open))
@@ -101,8 +114,8 @@ async function render() {
   );
 }
 
-function renderSession(s) {
-  const tabs = s.tabs
+function renderSession(s, tabsToShow) {
+  const tabs = (tabsToShow || s.tabs)
     .map(
       (tb) => `<li class="tabrow">
         ${tb.favIconUrl ? `<img class="fav" src="${esc(tb.favIconUrl)}" referrerpolicy="no-referrer" />` : `<span class="fallback"></span>`}
@@ -358,5 +371,21 @@ chrome.storage.onChanged.addListener((changes, area) => {
   await initLang();
   applyI18n();
   await render();
+
+  const searchEl = $("search");
+  const clearEl = $("search-clear");
+  searchEl.addEventListener("input", () => {
+    query = searchEl.value;
+    clearEl.hidden = !query;
+    render();
+  });
+  clearEl.addEventListener("click", () => {
+    searchEl.value = "";
+    query = "";
+    clearEl.hidden = true;
+    render();
+    searchEl.focus();
+  });
+
   maybeAutoBackup();
 })();

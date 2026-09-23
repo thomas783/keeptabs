@@ -66,6 +66,18 @@ const MESSAGES = {
     pick_folder_hint:
       "Tip: pick your Google Drive / OneDrive / Dropbox desktop-sync folder → backups upload automatically, no login, no server.",
     permission_needed: "Folder permission needed — click Connect again",
+    // popup (toolbar-icon preview)
+    popup_name_placeholder: "Name for this save (optional)",
+    popup_select_all: "Select all",
+    popup_saved_list: "Saved list →",
+    popup_save_close: "Save & close",
+    popup_save_only: "Save only",
+    popup_close_only: "Close only",
+    popup_search_ph: "Filter tabs",
+    popup_empty: "No savable tabs in this window.",
+    popup_count: "{n} / {total} tabs",
+    search_ph: "Search sessions & tabs",
+    no_search_results: "No matches.",
     language: "Language",
   },
   ko: {
@@ -130,6 +142,18 @@ const MESSAGES = {
     pick_folder_hint:
       "팁: 구글드라이브/OneDrive/Dropbox 데스크톱 동기화 폴더를 고르면 → 로그인·서버 없이 자동 업로드돼요.",
     permission_needed: "폴더 권한이 필요해요 — 다시 연결을 눌러주세요",
+    // popup (툴바 아이콘 미리보기)
+    popup_name_placeholder: "저장할 세션 이름 (선택)",
+    popup_select_all: "전체 선택",
+    popup_saved_list: "저장 목록 →",
+    popup_save_close: "저장하고 닫기",
+    popup_save_only: "저장만",
+    popup_close_only: "닫기만",
+    popup_search_ph: "탭 검색",
+    popup_empty: "이 창에는 저장할 탭이 없어요.",
+    popup_count: "탭 {n} / {total}개",
+    search_ph: "세션·탭 검색",
+    no_search_results: "일치하는 결과가 없어요.",
     language: "언어",
   },
 };
