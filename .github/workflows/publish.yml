@@ -1,0 +1,37 @@
+name: publish
+
+# Push a version tag (e.g. `git tag v1.1.0 && git push origin v1.1.0`) to build
+# the extension and publish it to the Chrome Web Store. Credentials come from repo
+# secrets (values never appear in the workflow or logs).
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: node --test tests/*.test.mjs
+
+      - name: Build extension zip
+        run: |
+          zip -rq extension.zip . \
+            -x '.git/*' '.github/*' 'tests/*' 'store/*' \
+               '*.zip' '*.md' 'harness.html' '.gitignore' '.DS_Store'
+
+      - name: Upload to Chrome Web Store and publish
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: |
+          npx --yes chrome-webstore-upload-cli@3 upload --source extension.zip
+          npx --yes chrome-webstore-upload-cli@3 publish
