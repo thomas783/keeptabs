@@ -29,3 +29,27 @@ test("unknown key returns the key itself", () => {
   useLang("en");
   assert.equal(t("___nope___"), "___nope___");
 });
+
+test("popup keys resolve in both languages", () => {
+  useLang("en");
+  assert.equal(t("popup_save_close"), "Save & close");
+  assert.equal(t("popup_close_only"), "Close only");
+  assert.equal(t("popup_search_ph"), "Filter tabs");
+  useLang("ko");
+  assert.equal(t("popup_save_close"), "저장하고 닫기");
+  assert.equal(t("popup_close_only"), "닫기만");
+  assert.equal(t("popup_search_ph"), "탭 검색");
+});
+
+test("popup_count interpolates n and total in both languages", () => {
+  useLang("en");
+  assert.equal(t("popup_count", { n: 3, total: 5 }), "3 / 5 tabs");
+  useLang("ko");
+  assert.equal(t("popup_count", { n: 3, total: 5 }), "탭 3 / 5개");
+});
+
+test("search keys exist for the vault", () => {
+  useLang("ko");
+  assert.equal(t("search_ph"), "세션·탭 검색");
+  assert.equal(t("no_search_results"), "일치하는 결과가 없어요.");
+});
