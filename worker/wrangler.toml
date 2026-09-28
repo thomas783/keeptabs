@@ -1,0 +1,23 @@
+# KeepTabs feedback relay (Cloudflare Worker).
+# Deploy:  npx wrangler deploy            (from this folder)
+# Secret:  npx wrangler secret put GITHUB_TOKEN
+#          fine-grained PAT scoped to thomas783/keeptabs, Issues: Read and write only
+name = "keeptabs-feedback"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+GITHUB_REPO = "thomas783/keeptabs"
+# Comma-separated. Web Store build; add an unpacked dev ID here when testing locally.
+ALLOWED_ORIGINS = "chrome-extension://obggnihijfooppjkddcpgpkmpcnamoap"
+
+# 3 submissions per IP per minute.
+[[ratelimits]]
+name = "FEEDBACK_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 3
+  period = 60

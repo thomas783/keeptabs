@@ -43,7 +43,7 @@ The gap KeepTabs fills = **local-first + automatic version backups + no subscrip
 
 ## Never-lose design
 - `setState()` in `storage.js` **appends a full snapshot of all sessions to history on every mutation** (ring buffer). No destructive overwrite or migration can silently lose data.
-- Data lives in `chrome.storage.local` (local-first). **Nothing is sent to any server** → removes the privacy-trust problem at the source, and server cost is zero. The optional sync-folder backup uses the browser's File System Access API and writes only to a folder you pick. See [PRIVACY.md](PRIVACY.md).
+- Data lives in `chrome.storage.local` (local-first). **Your tabs are never sent to any server** → removes the privacy-trust problem at the source, and server cost is zero. The optional sync-folder backup uses the browser's File System Access API and writes only to a folder you pick. The only network request is the optional feedback form, which sends just the text you type to a relay that opens a public GitHub issue. See [PRIVACY.md](PRIVACY.md).
 
 ## Install
 **From the Chrome Web Store (recommended):** **[Add to Chrome](https://chromewebstore.google.com/detail/obggnihijfooppjkddcpgpkmpcnamoap)** — one click, auto-updates.
