@@ -79,6 +79,17 @@ const MESSAGES = {
     search_ph: "Search sessions & tabs",
     no_search_results: "No matches.",
     language: "Language",
+    // auto-snapshots
+    autosnap_label: "Auto-snapshot open tabs",
+    every_n_min: "every {n} min",
+    autosnap_title: "Open-tab snapshots",
+    autosnap_hint: "Your open windows are captured automatically on a timer — recover them after a crash or a forgotten save.",
+    autosnap_none: "No snapshots yet.",
+    autosnap_meta: "{w} windows · {n} tabs",
+    autosnap_open: "Open",
+    autosnap_save: "Save to list",
+    autosnap_saved_toast: "Saved as {n} sessions",
+    versions_title: "Saved-list versions",
   },
   ko: {
     tagline: "탭을 절대 잃지 않는",
@@ -155,6 +166,17 @@ const MESSAGES = {
     search_ph: "세션·탭 검색",
     no_search_results: "일치하는 결과가 없어요.",
     language: "언어",
+    // 자동 스냅샷
+    autosnap_label: "열린 탭 자동 스냅샷",
+    every_n_min: "{n}분마다",
+    autosnap_title: "열린 탭 스냅샷",
+    autosnap_hint: "열려 있는 창을 주기적으로 자동 기록해요 — 크래시가 나거나 저장을 깜빡해도 되살릴 수 있어요.",
+    autosnap_none: "아직 스냅샷이 없어요.",
+    autosnap_meta: "창 {w}개 · 탭 {n}개",
+    autosnap_open: "창 열기",
+    autosnap_save: "목록에 저장",
+    autosnap_saved_toast: "세션 {n}개로 저장됨",
+    versions_title: "저장 목록 버전",
   },
 };
 
