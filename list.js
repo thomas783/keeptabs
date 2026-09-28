@@ -19,6 +19,14 @@ import {
   disconnectFolder,
   backupNow,
 } from "./backup.js";
+import {
+  INTERVALS,
+  getAutoSettings,
+  setAutoSettings,
+  getSnapshots,
+  openSnapshot,
+  saveSnapshotAsSessions,
+} from "./autosnap.js";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) =>
@@ -237,6 +245,7 @@ $("history").addEventListener("click", async () => {
     )
     .join("");
   $("history-list").innerHTML = rows || `<p class="hint">${esc(t("no_history"))}</p>`;
+  await renderSnapshots();
   document.querySelectorAll("[data-restore]").forEach((b) =>
     b.addEventListener("click", async () => {
       await restoreVersion(Number(b.dataset.restore));
@@ -248,6 +257,36 @@ $("history").addEventListener("click", async () => {
   );
   $("history-modal").hidden = false;
 });
+async function renderSnapshots() {
+  const snaps = await getSnapshots();
+  $("autosnap-list").innerHTML =
+    snaps
+      .map((sn) => {
+        const tabs = sn.windows.reduce((n, w) => n + w.tabs.length, 0);
+        return `<div class="hrow">
+        <div><div class="when">${when(sn.ts)}</div><div class="what">${esc(t("autosnap_meta", { w: sn.windows.length, n: tabs }))}</div></div>
+        <div class="btns">
+          <button class="mini" data-snap-open="${sn.id}">${esc(t("autosnap_open"))}</button>
+          <button class="mini" data-snap-save="${sn.id}">${esc(t("autosnap_save"))}</button>
+        </div>
+      </div>`;
+      })
+      .join("") || `<p class="hint">${esc(t("autosnap_none"))}</p>`;
+  document.querySelectorAll("[data-snap-open]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      await openSnapshot(Number(b.dataset.snapOpen));
+    })
+  );
+  document.querySelectorAll("[data-snap-save]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      const n = await saveSnapshotAsSessions(Number(b.dataset.snapSave));
+      $("history-modal").hidden = true;
+      toast(t("autosnap_saved_toast", { n }));
+      render();
+      maybeAutoBackup();
+    })
+  );
+}
 $("history-close").addEventListener("click", () => ($("history-modal").hidden = true));
 $("history-modal").addEventListener("click", (e) => {
   if (e.target.id === "history-modal") $("history-modal").hidden = true;
@@ -262,6 +301,13 @@ async function refreshBackupUI() {
   document.querySelectorAll('input[name="bmode"]').forEach((r) => (r.checked = r.value === s.mode));
   $("folder-panel").hidden = s.mode !== "folder";
   $("auto-backup").checked = s.autoOn;
+  const a = await getAutoSettings();
+  if (gen !== refreshGen) return;
+  $("autosnap-on").checked = a.enabled;
+  $("autosnap-interval").innerHTML = INTERVALS.map(
+    (m) => `<option value="${m}"${m === a.intervalMin ? " selected" : ""}>${esc(t("every_n_min", { n: m }))}</option>`
+  ).join("");
+  $("autosnap-interval").disabled = !a.enabled;
   if (s.mode !== "folder") return; // panel hidden — nothing else to sync
 
   const st = await backupStatus();
@@ -304,6 +350,13 @@ document.querySelectorAll('input[name="bmode"]').forEach((r) =>
   })
 );
 $("auto-backup").addEventListener("change", (e) => setSettings({ autoOn: e.target.checked }));
+$("autosnap-on").addEventListener("change", async (e) => {
+  await setAutoSettings({ enabled: e.target.checked });
+  refreshBackupUI();
+});
+$("autosnap-interval").addEventListener("change", (e) =>
+  setAutoSettings({ intervalMin: Number(e.target.value) })
+);
 
 $("folder-toggle").addEventListener("click", async () => {
   const toggle = $("folder-toggle");

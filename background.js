@@ -1,10 +1,21 @@
 import { ensureInit, addSession } from "./storage.js";
+import { scheduleAlarm, isAutoSnapAlarm, takeSnapshot } from "./autosnap.js";
 
 const newId = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
-chrome.runtime.onInstalled.addListener(ensureInit);
-chrome.runtime.onStartup.addListener(ensureInit);
+chrome.runtime.onInstalled.addListener(async () => {
+  await ensureInit();
+  await scheduleAlarm();
+});
+chrome.runtime.onStartup.addListener(async () => {
+  await ensureInit();
+  await scheduleAlarm();
+});
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (isAutoSnapAlarm(alarm)) takeSnapshot();
+});
 
 // Focus the vault if it's already open (avoids duplicate tabs); otherwise open it.
 // Only the "Saved list →" link calls this now — saving no longer forces it open.
