@@ -58,6 +58,7 @@ Or load the source unpacked (for development):
 - Localization: manifest name/description/title via `_locales/` (`default_locale: en`, plus `ko`); the in-app UI uses a small runtime i18n (`i18n.js`) with a language toggle.
 - Unit tests (Node's built-in test runner): `node --test tests/*.mjs` — covers storage, backup settings, and i18n.
 - `harness.html` is a git-ignored local page that runs the UI (`list.js`/`list.css`) against a mocked `chrome` API for quick visual testing.
+- Releasing to the Chrome Web Store (including releases that add a permission) and deploying the feedback relay: see [RELEASE.md](RELEASE.md).
 
 ## Roadmap
 - [ ] Cross-device sync polish and paid tier (still user-owned storage, no server)
