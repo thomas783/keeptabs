@@ -10,3 +10,4 @@ LAUNCH.md
 STORE_LISTING.md
 store/*.html
 store/real-tabs.png
+.wrangler/

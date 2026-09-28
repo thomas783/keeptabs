@@ -23,7 +23,7 @@ jobs:
       - name: Build extension zip
         run: |
           zip -rq extension.zip . \
-            -x '.git/*' '.github/*' 'tests/*' 'store/*' \
+            -x '.git/*' '.github/*' 'tests/*' 'store/*' 'worker/*' \
                '*.zip' '*.md' 'harness.html' '.gitignore' '.DS_Store'
 
       - name: Upload to Chrome Web Store and publish

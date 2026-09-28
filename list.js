@@ -27,6 +27,7 @@ import {
   openSnapshot,
   saveSnapshotAsSessions,
 } from "./autosnap.js";
+import { sendFeedback, ISSUES_URL } from "./feedback.js";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) =>
@@ -393,6 +394,44 @@ $("backup-now").addEventListener("click", async () => {
   } finally {
     btn.classList.remove("loading");
     await refreshBackupUI();
+  }
+});
+
+/* ---------------- feedback modal ---------------- */
+const FEEDBACK_ERRORS = { "too-short": "feedback_too_short", "rate-limited": "feedback_rate_limited" };
+$("feedback").addEventListener("click", () => {
+  $("feedback-msg").textContent = "";
+  $("feedback-modal").hidden = false;
+  $("feedback-text").focus();
+});
+$("feedback-close").addEventListener("click", () => ($("feedback-modal").hidden = true));
+$("feedback-modal").addEventListener("click", (e) => {
+  if (e.target.id === "feedback-modal") $("feedback-modal").hidden = true;
+});
+$("feedback-send").addEventListener("click", async () => {
+  const btn = $("feedback-send");
+  if (btn.classList.contains("loading")) return;
+  const msg = $("feedback-msg");
+  const message = $("feedback-text").value.trim();
+  if (message.length < 10) {
+    msg.textContent = t("feedback_too_short");
+    return;
+  }
+  btn.classList.add("loading");
+  msg.textContent = "";
+  try {
+    const type = document.querySelector('input[name="ftype"]:checked').value;
+    const url = await sendFeedback({ type, message, lang: getLang() });
+    $("feedback-text").value = "";
+    msg.innerHTML = `${esc(t("feedback_sent"))} <a href="${esc(url)}" target="_blank" rel="noopener">${esc(t("feedback_view"))}</a>`;
+    toast(t("feedback_sent"));
+  } catch (e) {
+    const key = FEEDBACK_ERRORS[e.message];
+    msg.innerHTML = key
+      ? esc(t(key))
+      : `${esc(t("feedback_failed"))} <a href="${ISSUES_URL}/new" target="_blank" rel="noopener">GitHub</a>`;
+  } finally {
+    btn.classList.remove("loading");
   }
 });
 
