@@ -1,16 +1,37 @@
 name: publish
 
 # Push a version tag (e.g. `git tag v1.1.0 && git push origin v1.1.0`) to build
-# the extension and publish it to the Chrome Web Store. Credentials come from repo
-# secrets (values never appear in the workflow or logs).
+# the extension, upload it, and publish it to the Chrome Web Store. Credentials come
+# from repo secrets (values never appear in the workflow or logs).
+#
+# Manual run (Actions → publish → Run workflow): action=upload uploads a draft only,
+# action=publish submits the uploaded draft for review. Needed for releases that add a
+# permission — see RELEASE.md.
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "upload = draft only · publish = submit the uploaded draft for review"
+        type: choice
+        options:
+          - upload
+          - publish
+        default: upload
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      # Tag pushes do both steps; manual runs do only the chosen one.
+      DO_UPLOAD: ${{ github.event_name == 'push' || inputs.action == 'upload' }}
+      DO_PUBLISH: ${{ github.event_name == 'push' || inputs.action == 'publish' }}
+      EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+      CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,20 +39,20 @@ jobs:
           node-version: 22
 
       - name: Run tests
+        if: env.DO_UPLOAD == 'true'
         run: node --test tests/*.test.mjs
 
       - name: Build extension zip
+        if: env.DO_UPLOAD == 'true'
         run: |
           zip -rq extension.zip . \
             -x '.git/*' '.github/*' 'tests/*' 'store/*' 'worker/*' \
                '*.zip' '*.md' 'harness.html' '.gitignore' '.DS_Store'
 
-      - name: Upload to Chrome Web Store and publish
-        env:
-          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
-          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
-        run: |
-          npx --yes chrome-webstore-upload-cli@3 upload --source extension.zip
-          npx --yes chrome-webstore-upload-cli@3 publish
+      - name: Upload to Chrome Web Store
+        if: env.DO_UPLOAD == 'true'
+        run: npx --yes chrome-webstore-upload-cli@3 upload --source extension.zip
+
+      - name: Submit for review (publish)
+        if: env.DO_PUBLISH == 'true'
+        run: npx --yes chrome-webstore-upload-cli@3 publish
