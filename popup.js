@@ -49,10 +49,21 @@ function render() {
     cb.dataset.tabId = String(tab.id);
     cb.addEventListener("change", updateState);
 
-    const fav = document.createElement("img");
-    fav.className = "fav";
-    fav.src = tab.favIconUrl || "icons/icon-16.png";
-    fav.addEventListener("error", () => (fav.src = "icons/icon-16.png"));
+    // Missing or broken favicon → empty placeholder box (same as the vault list).
+    const fallback = () => {
+      const span = document.createElement("span");
+      span.className = "fav fallback";
+      return span;
+    };
+    let fav;
+    if (tab.favIconUrl) {
+      fav = document.createElement("img");
+      fav.className = "fav";
+      fav.src = tab.favIconUrl;
+      fav.addEventListener("error", () => fav.replaceWith(fallback()));
+    } else {
+      fav = fallback();
+    }
 
     const title = document.createElement("span");
     title.className = "title";

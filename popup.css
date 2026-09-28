@@ -72,6 +72,7 @@ body {
 }
 .tab-row:hover { background: var(--hover); }
 .fav { width: 16px; height: 16px; border-radius: 3px; flex: none; }
+.fav.fallback { background: var(--hover); box-shadow: inset 0 0 0 1px var(--line); }
 .title {
   font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
