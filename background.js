@@ -1,5 +1,6 @@
 import { ensureInit, addSession } from "./storage.js";
-import { scheduleAlarm, isAutoSnapAlarm, takeSnapshot } from "./autosnap.js";
+import { scheduleAlarm, isAutoSnapAlarm, takeSnapshot, snapshotClosedWindow } from "./autosnap.js";
+import { seedAll, refreshWindow } from "./wincache.js";
 
 const newId = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -7,15 +8,31 @@ const newId = () =>
 chrome.runtime.onInstalled.addListener(async () => {
   await ensureInit();
   await scheduleAlarm();
+  await seedAll();
 });
 chrome.runtime.onStartup.addListener(async () => {
   await ensureInit();
   await scheduleAlarm();
+  await seedAll();
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (isAutoSnapAlarm(alarm)) takeSnapshot();
 });
+
+// Keep the per-window tab cache current, so a closing window can still be snapshotted.
+chrome.tabs.onCreated.addListener((tab) => refreshWindow(tab.windowId));
+chrome.tabs.onUpdated.addListener((_id, change, tab) => {
+  if (change.url || change.title || change.status === "complete") refreshWindow(tab.windowId);
+});
+chrome.tabs.onMoved.addListener((_id, info) => refreshWindow(info.windowId));
+chrome.tabs.onAttached.addListener((_id, info) => refreshWindow(info.newWindowId));
+chrome.tabs.onDetached.addListener((_id, info) => refreshWindow(info.oldWindowId));
+chrome.tabs.onRemoved.addListener((_id, info) => {
+  // While a window is closing its tabs vanish one by one — keep the cached last state.
+  if (!info.isWindowClosing) refreshWindow(info.windowId);
+});
+chrome.windows.onRemoved.addListener((windowId) => snapshotClosedWindow(windowId));
 
 // Focus the vault if it's already open (avoids duplicate tabs); otherwise open it.
 // Only the "Saved list →" link calls this now — saving no longer forces it open.

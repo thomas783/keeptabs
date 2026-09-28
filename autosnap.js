@@ -2,7 +2,8 @@
 // forgotten save never loses them. Kept in their own key (NOT in state.history):
 // frequent timer writes would otherwise evict the user's meaningful undo versions.
 
-import { isSavable, addSession } from "./storage.js";
+import { addSession } from "./storage.js";
+import { toSavableTabs, takeClosedWindow } from "./wincache.js";
 
 const KEY = "keeptabs_auto";
 const SETTINGS_KEY = "keeptabs_autosnap";
@@ -43,11 +44,7 @@ export async function captureWindows() {
   const wins = await chrome.windows.getAll({ populate: true, windowTypes: ["normal"] });
   return wins
     .filter((w) => !w.incognito)
-    .map((w) => ({
-      tabs: (w.tabs || [])
-        .filter((tb) => isSavable(tb.url))
-        .map((tb) => ({ url: tb.url, title: tb.title || tb.url, favIconUrl: tb.favIconUrl || "" })),
-    }))
+    .map((w) => ({ tabs: toSavableTabs(w.tabs) }))
     .filter((w) => w.tabs.length);
 }
 
@@ -59,15 +56,28 @@ export function isSameSnapshot(prev, next) {
   return key(prev) === key(next);
 }
 
-// Capture now and store it (newest first, capped). Returns the snapshot, or null if skipped.
-export async function takeSnapshot(now = Date.now()) {
-  const windows = await captureWindows();
+// Store a snapshot (newest first, capped). Returns it, or null if empty/unchanged.
+// reason: "timer" (periodic) | "window-close"
+async function storeSnapshot(windows, reason, now) {
   if (!windows.length) return null; // nothing open worth keeping
   const snaps = await getSnapshots();
-  const snap = { id: now, ts: now, windows };
+  const id = Math.max(now, (snaps[0]?.id || 0) + 1); // unique even within the same ms
+  const snap = { id, ts: now, reason, windows };
   if (isSameSnapshot(snaps[0], snap)) return null;
   await chrome.storage.local.set({ [KEY]: [snap, ...snaps].slice(0, SNAPSHOT_CAP) });
   return snap;
+}
+
+// Periodic capture of every open window.
+export async function takeSnapshot(now = Date.now()) {
+  return storeSnapshot(await captureWindows(), "timer", now);
+}
+
+// A window just closed → snapshot its last cached tabs (if auto-snapshots are on).
+export async function snapshotClosedWindow(windowId, now = Date.now()) {
+  const tabs = await takeClosedWindow(windowId); // always pop, so the cache never leaks
+  if (!(await getAutoSettings()).enabled || !tabs.length) return null;
+  return storeSnapshot([{ tabs }], "window-close", now);
 }
 
 // Reopen a snapshot: one new browser window per captured window.

@@ -264,7 +264,7 @@ async function renderSnapshots() {
       .map((sn) => {
         const tabs = sn.windows.reduce((n, w) => n + w.tabs.length, 0);
         return `<div class="hrow">
-        <div><div class="when">${when(sn.ts)}</div><div class="what">${esc(t("autosnap_meta", { w: sn.windows.length, n: tabs }))}</div></div>
+        <div><div class="when">${when(sn.ts)}</div><div class="what">${esc(t(sn.reason === "window-close" ? "reason_window_close" : "reason_timer"))} · ${esc(t("autosnap_meta", { w: sn.windows.length, n: tabs }))}</div></div>
         <div class="btns">
           <button class="mini" data-snap-open="${sn.id}">${esc(t("autosnap_open"))}</button>
           <button class="mini" data-snap-save="${sn.id}">${esc(t("autosnap_save"))}</button>
