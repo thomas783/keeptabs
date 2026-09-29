@@ -1,8 +1,9 @@
 name: publish
 
 # Push a version tag (e.g. `git tag v1.1.0 && git push origin v1.1.0`) to build
-# the extension, upload it, and publish it to the Chrome Web Store. Credentials come
-# from repo secrets (values never appear in the workflow or logs).
+# the extension, upload it, publish it to the Chrome Web Store, and create the matching
+# GitHub Release. Credentials come from repo secrets (values never appear in the
+# workflow or logs).
 #
 # Manual run (Actions → publish → Run workflow): action=upload uploads a draft only,
 # action=publish submits the uploaded draft for review. Needed for releases that add a
@@ -24,6 +25,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub Release
     env:
       # Tag pushes do both steps; manual runs do only the chosen one.
       DO_UPLOAD: ${{ github.event_name == 'push' || inputs.action == 'upload' }}
@@ -56,3 +59,14 @@ jobs:
       - name: Submit for review (publish)
         if: env.DO_PUBLISH == 'true'
         run: npx --yes chrome-webstore-upload-cli@3 publish
+
+      # Runs only after a successful submission, so a rejected one leaves no Release.
+      # Tag = manifest version: on a tag push it already exists; on a manual publish it is
+      # created here. Tags made with GITHUB_TOKEN don't trigger workflows, so no re-run.
+      - name: Create GitHub Release
+        if: env.DO_PUBLISH == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v$(node -p "require('./manifest.json').version")"
+          gh release create "$TAG" --target "$GITHUB_SHA" --generate-notes --title "KeepTabs $TAG"
