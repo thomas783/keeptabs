@@ -3,7 +3,8 @@
 Releases go to the Chrome Web Store through the `publish` GitHub Actions workflow
 (`.github/workflows/publish.yml`). It runs the tests, zips the extension (excluding
 `tests/`, `store/`, `worker/`, Markdown files, and other dev-only files), uploads the
-zip, and submits it for review. Store credentials live in repo secrets
+zip, submits it for review, and creates the GitHub Release for the tag (notes generated
+from the merged PRs). Store credentials live in repo secrets
 (`CWS_EXTENSION_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN`).
 
 ## Regular release (no new permissions)
@@ -15,8 +16,9 @@ zip, and submits it for review. Store credentials live in repo secrets
    git tag -a v1.3.0 -m "KeepTabs 1.3.0"
    git push origin v1.3.0
    ```
-3. The workflow uploads and submits for review. With the dashboard's default setting,
-   the item is published automatically once review passes.
+3. The workflow uploads, submits for review, and creates the GitHub Release. With the
+   dashboard's default setting, the item is published automatically once review passes.
+   Edit the Release notes afterwards if the generated PR list needs a friendlier summary.
 
 ## Release that adds a permission
 
@@ -33,10 +35,13 @@ Use the manual workflow instead:
    KeepTabs → **Privacy practices**, fill in the new permission's justification, and
    update the data-usage disclosures if the release collects or sends anything new.
    Click **Save draft**.
-4. **Run workflow** again with `action = publish` to submit the draft for review
-   (or click **Submit for review** in the dashboard).
-5. Optional: record the release as a GitHub Release instead of pushing a `v*` tag.
-   A tag push would re-run the full workflow and fail, because that version is already uploaded.
+4. **Run workflow** again on `main` with `action = publish`. It submits the draft for
+   review and creates the `v<version>` tag and GitHub Release from `manifest.json`.
+   **Don't push a `v*` tag yourself** — that would re-run the full workflow and fail,
+   because the version is already uploaded. (The tag the workflow creates uses
+   `GITHUB_TOKEN`, which doesn't trigger another run.)
+   Prefer this over **Submit for review** in the dashboard: submitting there skips the
+   Release, and creating it by hand afterwards may start a tag-push run that fails at upload.
 
 Also update `PRIVACY.md` (the **Permissions** section) in the same PR that adds the permission.
 
